@@ -1,0 +1,41 @@
+name: GUIBan
+version: 2.0
+main: com.enterprise.guiban.GUIBAN
+api-version: 1.21
+author: Mathew Pittard
+website: https://github.com/TVDOfficial/GuiBan
+
+commands:
+  guiban:
+    description: Main command for GUIBan. Open GUI or run ban/mute/jail/kick.
+    usage: /<command> [help|ban|mute|jail|kick|unban|unmute|unjail|reload] [player] [time] [reason]
+    aliases: [gb]
+
+permissions:
+  guiban.use:
+    description: Open GUIBan menu and use GUI actions
+    default: op
+  guiban.ban:
+    description: Ban players
+    default: op
+  guiban.mute:
+    description: Mute players
+    default: op
+  guiban.jail:
+    description: Jail players
+    default: op
+  guiban.kick:
+    description: Kick players
+    default: op
+  guiban.unban:
+    description: Unban players
+    default: op
+  guiban.unmute:
+    description: Unmute players
+    default: op
+  guiban.unjail:
+    description: Unjail players
+    default: op
+  guiban.admin:
+    description: Reload configs and admin access
+    default: op

@@ -1,0 +1,10 @@
+# GUIBan Configuration
+
+storage:
+  type: SQLITE # Options: SQLITE, YAML, MYSQL
+  mysql:
+    host: localhost
+    port: 3306
+    database: guiban
+    username: root
+    password: ""

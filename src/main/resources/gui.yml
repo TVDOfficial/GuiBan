@@ -1,0 +1,32 @@
+# GUIBan - GUI Configuration
+
+menus:
+  player_selection:
+    title: "§8GUIBan - Player Selection"
+    item:
+      name: "§b{PLAYER}"
+      lore:
+        - "§7Click to manage player."
+  moderation:
+    title: "§8Manage: {PLAYER}"
+    items:
+      ban:
+        material: RED_CONCRETE
+        name: "§c§lBAN"
+        lore:
+          - "§7Ban this player."
+      mute:
+        material: ORANGE_CONCRETE
+        name: "§6§lMUTE"
+        lore:
+          - "§7Mute this player."
+      jail:
+        material: YELLOW_CONCRETE
+        name: "§e§lJAIL"
+        lore:
+          - "§7Jail this player."
+      kick:
+        material: IRON_DOOR
+        name: "§f§lKICK"
+        lore:
+          - "§7Kick this player."
