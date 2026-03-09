@@ -8,10 +8,13 @@ website: https://github.com/TVDOfficial/GuiBan
 commands:
   guiban:
     description: Main command for GUIBan. Open GUI or run ban/mute/jail/kick.
-    usage: /<command> [help|ban|mute|jail|kick|unban|unmute|unjail|reload] [player] [time] [reason]
+    usage: /<command> [help|ban|mute|jail|kick|unban|unmute|unjail|reload|list] [player] [time] [reason]
     aliases: [gb]
 
 permissions:
+  guiban.*:
+    description: All GUIBan permissions (includes all below and level 10)
+    default: op
   guiban.use:
     description: Open GUIBan menu and use GUI actions
     default: op
@@ -36,6 +39,51 @@ permissions:
   guiban.unjail:
     description: Unjail players
     default: op
+  guiban.view:
+    description: View active punishments and history
+    default: op
+  guiban.warn:
+    description: Warn players
+    default: op
+  guiban.ipban:
+    description: IP ban players
+    default: op
+  guiban.broadcast:
+    description: Receive staff broadcast when someone is banned
+    default: op
   guiban.admin:
     description: Reload configs and admin access
     default: op
+  guiban.bypass:
+    description: Cannot be punished (e.g. server owner)
+    default: op
+  guiban.level.1:
+    description: Permission level 1 (lowest; can be punished by level 2+)
+    default: false
+  guiban.level.2:
+    description: Permission level 2
+    default: false
+  guiban.level.3:
+    description: Permission level 3
+    default: false
+  guiban.level.4:
+    description: Permission level 4
+    default: false
+  guiban.level.5:
+    description: Permission level 5
+    default: false
+  guiban.level.6:
+    description: Permission level 6
+    default: false
+  guiban.level.7:
+    description: Permission level 7
+    default: false
+  guiban.level.8:
+    description: Permission level 8
+    default: false
+  guiban.level.9:
+    description: Permission level 9
+    default: false
+  guiban.level.10:
+    description: Permission level 10 (highest; can punish everyone except bypass)
+    default: false

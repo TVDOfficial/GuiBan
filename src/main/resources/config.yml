@@ -8,3 +8,43 @@ storage:
     database: guiban
     username: root
     password: ""
+
+# Ban appeal URL (shown in ban message, leave empty to hide)
+ban-appeal-url: ""
+
+# Jail location (world, x, y, z) - teleport jailed players here. Leave empty to freeze in place.
+jail:
+  world: "world"
+  x: 0
+  y: 64
+  z: 0
+  use: false
+
+# Sounds (leave empty to disable)
+sounds:
+  open-menu: "BLOCK_NOTE_BLOCK_PLING"
+  punishment-applied: "ENTITY_VILLAGER_NO"
+  error: "ENTITY_VILLAGER_NO"
+
+# Staff broadcast when someone is banned (requires guiban.broadcast)
+staff-broadcast: true
+
+# Rate limit: max punishments per minute per player (0 = disabled)
+rate-limit: 10
+
+# Discord webhook (leave empty to disable)
+discord:
+  webhook-url: ""
+  ban-message: "**{player}** was banned by **{punisher}** for `{reason}`"
+  mute-message: "**{player}** was muted by **{punisher}** for `{reason}`"
+  jail-message: "**{player}** was jailed by **{punisher}** for `{reason}`"
+
+# Audit log (log to file)
+audit-log: true
+
+# Warn system: auto-punish after X warnings.
+warns:
+  enabled: false
+  max-before-punish: 3
+  punish-type: MUTE
+  punish-duration: "1h"

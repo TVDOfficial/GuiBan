@@ -46,10 +46,11 @@ public class MySQLProvider implements StorageProvider {
                 "reason TEXT," +
                 "start_time BIGINT," +
                 "expiry_time BIGINT," +
-                "punisher VARCHAR(16));"
+                "punisher VARCHAR(64));"
             );
+            stmt.execute("CREATE TABLE IF NOT EXISTS ip_bans (ip VARCHAR(45) PRIMARY KEY, reason TEXT, start_time BIGINT, expiry_time BIGINT, punisher VARCHAR(64));");
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
         }
     }
 
@@ -67,7 +68,7 @@ public class MySQLProvider implements StorageProvider {
             ps.setString(6, punishment.getPunisher());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
         }
     }
 
@@ -81,7 +82,7 @@ public class MySQLProvider implements StorageProvider {
             ps.setString(2, type.name());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
         }
     }
 
@@ -107,7 +108,7 @@ public class MySQLProvider implements StorageProvider {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
         }
         return null;
     }
@@ -133,8 +134,114 @@ public class MySQLProvider implements StorageProvider {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
         }
         return history;
+    }
+
+    @Override
+    public List<Punishment> getActivePunishments(PunishmentType type) {
+        List<Punishment> out = new ArrayList<>();
+        java.util.Set<UUID> seen = new java.util.HashSet<>();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                 "SELECT * FROM punishments WHERE type = ? ORDER BY start_time DESC"
+             )) {
+            ps.setString(1, type.name());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("uuid"));
+                    if (seen.contains(uuid)) continue;
+                    Punishment p = new Punishment(uuid, type, rs.getString("reason"),
+                        rs.getLong("start_time"), rs.getLong("expiry_time"), rs.getString("punisher"));
+                    if (!p.isExpired()) {
+                        seen.add(uuid);
+                        out.add(p);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
+        }
+        return out;
+    }
+
+    @Override
+    public boolean isIpBanned(String ip) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT expiry_time FROM ip_bans WHERE ip = ?")) {
+            ps.setString(1, ip);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    long exp = rs.getLong("expiry_time");
+                    return exp == -1 || System.currentTimeMillis() < exp;
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public void addIpBan(String ip, String reason, long expiry, String punisher) {
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement del = conn.prepareStatement("DELETE FROM ip_bans WHERE ip = ?")) {
+                del.setString(1, ip);
+                del.executeUpdate();
+            }
+            try (PreparedStatement ps = conn.prepareStatement("INSERT INTO ip_bans (ip, reason, start_time, expiry_time, punisher) VALUES (?, ?, ?, ?, ?)")) {
+                ps.setString(1, ip);
+                ps.setString(2, reason);
+                ps.setLong(3, System.currentTimeMillis());
+                ps.setLong(4, expiry);
+                ps.setString(5, punisher);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void removeIpBan(String ip) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM ip_bans WHERE ip = ?")) {
+            ps.setString(1, ip);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public int getWarnCount(UUID uuid) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM punishments WHERE uuid = ? AND type = 'WARN'")) {
+            ps.setString(1, uuid.toString());
+            int count = 0;
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Punishment p = new Punishment(uuid, PunishmentType.WARN, rs.getString("reason"),
+                        rs.getLong("start_time"), rs.getLong("expiry_time"), rs.getString("punisher"));
+                    if (!p.isExpired()) count++;
+                }
+            }
+            return count;
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public void cleanupExpired() {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM punishments WHERE type != 'KICK' AND expiry_time != -1 AND expiry_time < ?")) {
+            ps.setLong(1, System.currentTimeMillis());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Storage error: " + e.getMessage());
+        }
     }
 }

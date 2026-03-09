@@ -1,0 +1,39 @@
+# GUIBan - Customizable Messages
+# Use {player}, {reason}, {duration}, {punisher} as placeholders
+
+prefix: "§b[GUIBan] §r"
+no-permission: "§cYou do not have permission to use GUIBan."
+cannot-punish: "§cYou cannot punish that player (bypass or higher level)."
+player-offline: "§cPlayer is not online."
+usage: "§cUsage: /guiban <ban|mute|kick|jail|unban|unmute|unjail> <player> [time] [reason]"
+unknown-subcommand: "§cUnknown subcommand."
+reload-success: "§7Configurations reloaded."
+cancelled: "§7Cancelled."
+
+# Punishment messages
+punished: "§f{player} §7has been {type}ed."
+reason: "§7Reason: §f{reason}"
+duration: "§7Duration: §f{duration}"
+unpunished: "§f{player} §7has been un{type}ed."
+
+# Ban/kick messages (shown to target)
+ban-message: "§cYou are banned!\n§7Reason: §f{reason}\n§7Expires: §f{duration}\n§7Appeal: §f{appeal}"
+kick-message: "§cKicked by §f{punisher}\n§7Reason: §f{reason}"
+mute-jail-message: "§cYou have been {type}ed for §f{duration}\n§7Reason: §f{reason}"
+
+# Mute message (when trying to chat)
+muted: "§cYou are muted!"
+muted-reason: "§7Reason: §f{reason}"
+muted-expires: "§7Expires: §f{duration}"
+
+# Jail message (when trying to move)
+jailed: "§cYou are jailed!"
+jailed-expires: "§7Expires: §f{duration}"
+
+# GUI messages
+search-prompt: "§7Type player name to search (or §cclear§7 to show all)."
+reason-prompt: "§7Type reason in chat (or §ccancel§7)."
+list-usage: "§7Usage: /gb list <ban|mute|jail>"
+
+# Staff broadcast (when someone is banned)
+staff-broadcast: "§8[Staff] §c{player} §7was banned by §f{punisher} §7for §f{reason}"
